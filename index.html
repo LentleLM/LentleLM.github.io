@@ -26,18 +26,19 @@
     --accent-strong: #4A2775;
     --tag: #F3EEF9;
     --shadow: 0 1px 2px rgba(29,23,38,.04), 0 8px 24px rgba(74,39,117,.08);
+    --bar-miss: #D6C6EC;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #141018; --surface: #1D1824; --ink: #F2EEF7; --ink-2: #CFC6DA; --muted: #9D93AA;
       --line: #2E2738; --accent: #B994E8; --accent-ink: #1A1022; --accent-soft: #2A2036;
-      --accent-strong: #D6BEF5; --tag: #261F30; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+      --accent-strong: #D6BEF5; --tag: #261F30; --bar-miss: #4E3E66; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
     }
   }
   :root[data-theme="dark"] {
     --bg: #141018; --surface: #1D1824; --ink: #F2EEF7; --ink-2: #CFC6DA; --muted: #9D93AA;
     --line: #2E2738; --accent: #B994E8; --accent-ink: #1A1022; --accent-soft: #2A2036;
-    --accent-strong: #D6BEF5; --tag: #261F30; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    --accent-strong: #D6BEF5; --tag: #261F30; --bar-miss: #4E3E66; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -160,7 +161,48 @@
   .win { display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--accent-strong);
          background: var(--accent-soft); border-radius: 999px; padding: 3px 10px; }
 
+
+  /* Interactive demo */
+  .demo { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 28px; }
+  .demo-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .demo-head h4 { margin: 0; font: 700 20px/1.2 Fraunces, Georgia, serif; }
+  .demo-head span { font-size: 14px; color: var(--muted); }
+  .demo-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 28px; }
+  .rows { display: grid; gap: 10px; }
+  .row { display: grid; grid-template-columns: 1fr 52px; gap: 6px 12px; align-items: center;
+         background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+  .row label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .row label small { font-weight: 400; color: var(--muted); }
+  .row output { text-align: right; font: 500 14px/1 "JetBrains Mono", monospace; color: var(--ink); }
+  .row input[type=range] { grid-column: 1 / -1; }
+  .row.pending output { color: var(--muted); }
+  .row.pending input[type=range] { opacity: .35; }
+  input[type=range] { width: 100%; accent-color: var(--accent); margin: 0; }
+  input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+  .target { background: var(--accent-soft); border-color: transparent; }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .kpi { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .kpi span { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .kpi b { font: 700 24px/1.1 Fraunces, Georgia, serif; color: var(--ink); }
+  .kpi.main b { color: var(--accent); }
+  .chart-wrap { position: relative; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 6px; }
+  .chart-wrap svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .bar { fill: var(--bar-miss); }
+  .bar.hit { fill: var(--accent); }
+  .bar-hit-area { fill: transparent; cursor: crosshair; }
+  .axis text { fill: var(--muted); font: 11px Inter, sans-serif; }
+  .axis line { stroke: var(--line); }
+  .tline { stroke: var(--ink-2); stroke-dasharray: 3 3; stroke-width: 1.5; }
+  .tlabel { fill: var(--ink-2); font: 600 11px Inter, sans-serif; }
+  .tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px;
+         padding: 6px 8px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -110%); display: none; }
+  .demo-note { font-size: 13px; color: var(--muted); margin: 12px 0 0; }
+  .status { font-size: 14px; color: var(--ink-2); margin: 0 0 12px; min-height: 1.4em; }
+
   @media (max-width: 820px) {
+    .demo-grid { grid-template-columns: 1fr; }
+    .kpis { grid-template-columns: 1fr 1fr; }
+    .kpi.main { grid-column: 1 / -1; }
     nav ul { display: none; }
     .hero { padding: 48px 0 40px; }
     .hero-grid { grid-template-columns: 1fr; gap: 36px; }
@@ -309,7 +351,7 @@
         <figcaption>Dashboard view, running on synthetic demo data.</figcaption>
       </figure>
       <div>
-        <p class="kicker">Python · Streamlit · Plotly · pytest</p>
+        <p class="kicker">Python · Streamlit · Plotly · NumPy · pytest</p>
         <h3>Academic Grade Tracker</h3>
         <p>A web app that answers the question every student has before a final: <em>what mark do I actually need?</em> It tracks weighted assessments across a full degree and projects each course and the overall average toward a target.</p>
         <dl>
@@ -317,11 +359,13 @@
           <dd>Spreadsheets count a missing mark as zero, and syllabi have edge cases, like a "best of two grading schemes" rule, that simple formulas get wrong.</dd>
           <dt>What I built</dt>
           <dd>A relational data model across three tables, a pure-Python calculation engine, input validation, and a dashboard with risk labels for each course and credit-weighted degree projections.</dd>
+          <dt>The prediction</dt>
+          <dd>A Monte Carlo forecast gives the <strong>probability</strong> of hitting a target grade. It shrinks small samples toward a prior and models correlated performance across a term, so it doesn't overreact to one good quiz. Try it below.</dd>
           <dt>What it shows</dt>
-          <dd>Data modelling, defensive validation, 34 unit tests covering edge cases (a missing mark isn't zero, targets above 100% flagged as unattainable, no divide-by-zero), and keeping private data out of a public repo.</dd>
+          <dd>Data modelling, defensive validation, 44 unit tests covering edge cases (a missing mark isn't zero, targets above 100% flagged as unattainable, no divide-by-zero), and keeping private data out of a public repo.</dd>
         </dl>
         <ul class="tags">
-          <li>Data modelling</li><li>Testing</li><li>Dashboards</li><li>pandas</li>
+          <li>Monte Carlo simulation</li><li>Data modelling</li><li>Testing</li><li>Dashboards</li><li>pandas</li>
         </ul>
         <!-- TODO: uncomment once the app repo and live demo exist
         <div class="links">
@@ -329,6 +373,29 @@
           <a class="btn" href="https://github.com/LentleLM/academic-grade-tracker">Code &amp; write-up</a>
         </div>
         -->
+      </div>
+
+      <div class="demo" id="grade-demo">
+        <div class="demo-head">
+          <h4>Try it: will this student hit their target?</h4>
+          <span>Runs 5,000 simulated terms in your browser, using the app's forecasting model</span>
+        </div>
+        <div class="demo-grid">
+          <div class="rows" id="demo-rows"></div>
+          <div>
+            <div class="kpis">
+              <div class="kpi main"><span id="k-chance-label">Chance of 85%+</span><b id="k-chance">–</b></div>
+              <div class="kpi"><span>Needed on the rest</span><b id="k-need">–</b></div>
+              <div class="kpi"><span>Likely range</span><b id="k-range">–</b></div>
+            </div>
+            <p class="status" id="k-status" aria-live="polite"></p>
+            <div class="chart-wrap">
+              <svg id="demo-chart" viewBox="0 0 520 210" role="img" aria-label="Histogram of simulated final grades"></svg>
+              <div class="tip" id="demo-tip"></div>
+            </div>
+            <p class="demo-note">Unmarked work is never counted as zero. Each simulation draws the remaining marks from the student's average so far, pulled toward 75% while little is graded, plus a shared "good or bad term" swing. Darker bars reach the target.</p>
+          </div>
+        </div>
       </div>
     </article>
 
@@ -388,5 +455,153 @@
   </div>
 </footer>
 
+
+<script>
+(function () {
+  // Same model as src/prediction.py in the app.
+  const PRIOR_MEAN = 75, PRIOR_WEIGHT = 20, PRIOR_SD = 10, FORM_SD = 5, N = 5000;
+  const items = [
+    { name: "Assignments", w: 20, mark: 88, graded: true },
+    { name: "Midterm 1",   w: 15, mark: 79, graded: true },
+    { name: "Midterm 2",   w: 15, mark: 80, graded: false },
+    { name: "Final exam",  w: 50, mark: 80, graded: false },
+  ];
+  let target = 85;
+
+  // Seeded RNG so the chart doesn't flicker between identical inputs.
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function normal(r) {
+    let u = 0; while (u === 0) u = r();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r());
+  }
+
+  function simulate() {
+    const graded = items.filter(i => i.graded), pending = items.filter(i => !i.graded);
+    const gw = graded.reduce((a, i) => a + i.w, 0);
+    const banked = graded.reduce((a, i) => a + i.mark * i.w / 100, 0);
+    const avg = gw ? graded.reduce((a, i) => a + i.mark * i.w, 0) / gw : null;
+    const mu = gw ? (gw * avg + PRIOR_WEIGHT * PRIOR_MEAN) / (gw + PRIOR_WEIGHT) : PRIOR_MEAN;
+    const scores = graded.map(i => i.mark), n = scores.length;
+    let sd = PRIOR_SD;
+    if (n >= 2) {
+      const m = scores.reduce((a, b) => a + b, 0) / n;
+      const v = scores.reduce((a, b) => a + (b - m) ** 2, 0) / (n - 1);
+      sd = Math.sqrt(((n - 1) * v + 3 * PRIOR_SD ** 2) / (n - 1 + 3));
+    }
+    const remaining = 100 - gw;
+    const r = rng(12345), finals = new Float64Array(N);
+    for (let s = 0; s < N; s++) {
+      const form = normal(r) * FORM_SD;
+      let f = banked;
+      for (const p of pending) {
+        const x = Math.min(100, Math.max(0, mu + form + normal(r) * sd));
+        f += x * p.w / 100;
+      }
+      finals[s] = f;
+    }
+    const sorted = Float64Array.from(finals).sort();
+    const pct = q => sorted[Math.min(N - 1, Math.floor(q * (N - 1)))];
+    const chance = finals.reduce((a, f) => a + (f >= target - 1e-9 ? 1 : 0), 0) / N;
+    const need = remaining > 0 ? (target - banked) / (remaining / 100) : null;
+    return { finals, chance, p10: pct(0.1), p90: pct(0.9), need, remaining, banked, avg };
+  }
+
+  // ---- UI -------------------------------------------------------------------
+  const rowsEl = document.getElementById("demo-rows");
+  function rowHTML(i, idx) {
+    return `<div class="row ${i.graded ? "" : "pending"}">
+      <label><input type="checkbox" data-i="${idx}" ${i.graded ? "checked" : ""} aria-label="${i.name} has been marked">
+        ${i.name} <small>${i.w}%</small></label>
+      <output id="o${idx}">${i.graded ? i.mark + "%" : "pending"}</output>
+      <input type="range" min="0" max="100" step="1" value="${i.mark}" data-i="${idx}" ${i.graded ? "" : "disabled"}
+        aria-label="${i.name} mark">
+    </div>`;
+  }
+  function renderRows() {
+    rowsEl.innerHTML = items.map(rowHTML).join("") +
+      `<div class="row target"><label for="t-range">Target grade</label><output id="t-out">${target}%</output>
+       <input id="t-range" type="range" min="50" max="95" step="1" value="${target}" aria-label="Target grade"></div>`;
+  }
+  rowsEl.addEventListener("input", e => {
+    const el = e.target;
+    if (el.id === "t-range") { target = +el.value; document.getElementById("t-out").textContent = target + "%"; return update(); }
+    const i = items[+el.dataset.i];
+    if (el.type === "checkbox") { i.graded = el.checked; renderRows(); }
+    else { i.mark = +el.value; document.getElementById("o" + el.dataset.i).textContent = i.mark + "%"; }
+    update();
+  });
+
+  const svg = document.getElementById("demo-chart"), tip = document.getElementById("demo-tip");
+  const W = 520, H = 210, L = 34, R = 8, T = 22, B = 26;
+  function draw(res) {
+    const lo = Math.floor(Math.min(...res.finals)), hi = Math.ceil(Math.max(...res.finals)) + 1;
+    const span = Math.max(hi - lo, 1), bins = new Array(span).fill(0);
+    for (const f of res.finals) bins[Math.min(span - 1, Math.floor(f - lo))]++;
+    const xMin = Math.min(lo, target - 2), xMax = Math.max(hi, target + 2);
+    const x = v => L + (v - xMin) / (xMax - xMin) * (W - L - R);
+    const maxShare = Math.max(...bins) / N || 1, yTop = Math.ceil(maxShare * 100 / 5) * 5 / 100 || 0.05;
+    const y = v => H - B - v / yTop * (H - T - B);
+    let out = '<g class="axis">';
+    for (let k = 0; k <= 2; k++) {
+      const v = yTop * k / 2;
+      out += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${Math.round(v * 100)}%</text>`;
+    }
+    const step = (xMax - xMin) > 30 ? 10 : 5;
+    for (let t = Math.ceil(xMin / step) * step; t <= xMax; t += step)
+      out += `<text x="${x(t)}" y="${H - 8}" text-anchor="middle">${t}%</text>`;
+    out += "</g>";
+    const bw = Math.max(1, x(lo + 1) - x(lo) - 1.5);
+    bins.forEach((c, k) => {
+      if (!c) return;
+      const v0 = lo + k, share = c / N, top = y(share);
+      out += `<rect class="bar ${v0 >= target ? "hit" : ""}" x="${x(v0) + 0.75}" y="${top}" width="${bw}" height="${H - B - top}" rx="2"/>`;
+      out += `<rect class="bar-hit-area" x="${x(v0)}" y="${T}" width="${bw + 1.5}" height="${H - B - T}" data-tip="Final ≈ ${v0}–${v0 + 1}%: ${(share * 100).toFixed(1)}% of runs"/>`;
+    });
+    out += `<line class="tline" x1="${x(target)}" x2="${x(target)}" y1="${T - 6}" y2="${H - B}"/>
+            <text class="tlabel" x="${x(target)}" y="${T - 10}" text-anchor="middle">Target ${target}%</text>`;
+    svg.innerHTML = out;
+  }
+  svg.addEventListener("mousemove", e => {
+    const t = e.target.dataset && e.target.dataset.tip;
+    if (!t) { tip.style.display = "none"; return; }
+    const box = svg.parentElement.getBoundingClientRect();
+    tip.textContent = t; tip.style.display = "block";
+    tip.style.left = (e.clientX - box.left) + "px"; tip.style.top = (e.clientY - box.top) + "px";
+  });
+  svg.addEventListener("mouseleave", () => tip.style.display = "none");
+
+  function update() {
+    const res = simulate();
+    document.getElementById("k-chance-label").textContent = `Chance of ${target}%+`;
+    document.getElementById("k-chance").textContent = Math.round(res.chance * 100) + "%";
+    document.getElementById("k-range").textContent = res.remaining > 0
+      ? `${Math.round(res.p10)}–${Math.round(res.p90)}%` : `${res.banked.toFixed(1)}%`;
+    const kNeed = document.getElementById("k-need"), status = document.getElementById("k-status");
+    if (res.need === null) {
+      kNeed.textContent = "—";
+      status.textContent = `Everything is marked: the final grade is ${res.banked.toFixed(1)}%.`;
+    } else if (res.need <= 0) {
+      kNeed.textContent = "Done";
+      status.textContent = "Target already secured, even with zero on everything left.";
+    } else if (res.need > 100) {
+      kNeed.textContent = Math.round(res.need) + "%";
+      status.textContent = "Out of reach: even 100% on everything left falls short.";
+    } else {
+      kNeed.textContent = res.need.toFixed(1) + "%";
+      status.textContent = `${res.remaining}% of the course is still to come.` +
+        (res.avg !== null ? ` Average so far: ${res.avg.toFixed(1)}%.` : " Nothing marked yet.");
+    }
+    draw(res);
+  }
+  renderRows(); update();
+})();
+</script>
 </body>
 </html>
